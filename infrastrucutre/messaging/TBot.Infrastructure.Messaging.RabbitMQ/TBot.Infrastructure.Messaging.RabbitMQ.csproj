@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TBot.Infrastructure\TBot.Infrastructure.csproj" />
+    <ProjectReference Include="..\TBot.Infrastructure.Messaging.Abstractions\TBot.Infrastructure.Messaging.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
