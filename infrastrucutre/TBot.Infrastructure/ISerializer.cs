@@ -7,5 +7,6 @@
 
         T Deserialize<T>(string content);
         T Deserialize<T>(byte[] content);
+        object Deserialize(byte[] content);
     }
 }

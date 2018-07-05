@@ -9,34 +9,9 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Subscriptions
     {
         ISubscription CreateSubscription<TMessage>(Func<TMessage, Task> handler) where TMessage : class, IMessage;
 
-        ISubscription ResolveSubscription<TMessage>();
+        IList<ISubscription> ResolveSubscriptions<TMessage>();
+        IList<ISubscription> ResolveSubscriptions(string messageType);
 
         void DeleteSubscription(ISubscription subscription);
-    }
-
-    class SubscriptionsRegistry : ISubscriptionsRegistry
-    {
-        private readonly IDictionary<string, ISubscription> _subscriptions = new Dictionary<string, ISubscription>();
-
-
-        public ISubscription CreateSubscription<TMessage>(Func<TMessage, Task> handler) where TMessage : class, IMessage
-        {
-            var subscription = new Subscription<TMessage>(this, handler);
-            this._subscriptions.Add(typeof(TMessage).Name, subscription);
-
-            return subscription;
-        }
-
-        public ISubscription ResolveSubscription<TMessage>()
-        {
-            var key = typeof(TMessage).Name;
-            return this._subscriptions[key];
-        }
-
-        public void DeleteSubscription(ISubscription subscription)
-        {
-            var key = subscription.Type.Name;
-            this._subscriptions.Remove(key);
-        }
     }
 }

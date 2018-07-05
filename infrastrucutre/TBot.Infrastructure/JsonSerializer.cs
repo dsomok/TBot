@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -8,7 +10,11 @@ namespace TBot.Infrastructure
     {
         public string Serialize<T>(T data)
         {
-            return JsonConvert.SerializeObject(data);
+            return JsonConvert.SerializeObject(data, Formatting.None, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+            });
         }
 
         public byte[] SerializeAsBytes<T>(T data)
@@ -26,6 +32,15 @@ namespace TBot.Infrastructure
         {
             var json = Encoding.UTF8.GetString(content);
             return JsonConvert.DeserializeObject<T>(json);
+        }
+
+        public object Deserialize(byte[] content)
+        {
+            var json = Encoding.UTF8.GetString(content);
+            return JsonConvert.DeserializeObject(json, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
         }
     }
 }
