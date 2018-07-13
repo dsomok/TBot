@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TBot.Infrastructure.Messaging.Abstractions.Messages;
 
 namespace TBot.Infrastructure.Messaging.Abstractions.Topology
 {
     public interface ITopology
     {
-        Task SendCommand(Message command);
+        IEndpoint ResolveEventSubscriptionEndpoint<TMessage>(string service) where TMessage : IEvent;
+        IEndpoint ResolveCommandSubscriptionEndpoint<TMessage>(string service) where TMessage : ICommand;
 
-        Task SubscribeForCommands(string service);
+        IEndpoint ResolveEventPublishingEndpoint<TMessage>(Message message) where TMessage : IEvent;
+        IEndpoint ResolveCommandPublishingEndpoint<TMessage>(string service, Message message) where TMessage : ICommand;
     }
 }

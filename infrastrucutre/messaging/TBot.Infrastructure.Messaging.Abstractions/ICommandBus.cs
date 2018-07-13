@@ -7,8 +7,6 @@ namespace TBot.Infrastructure.Messaging.Abstractions
 {
     public interface ICommandBus
     {
-        Task SubscribeForAllMessages();
-
         Task<ISubscription> RegisterHandler<TCommand>(string service, Func<TCommand, Task> handler) where TCommand : class, ICommand;
 
         Task Send<TCommand>(string service, TCommand command) where TCommand : class, ICommand;

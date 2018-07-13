@@ -7,7 +7,7 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Subscriptions
 {
     public interface ISubscriptionsRegistry
     {
-        ISubscription CreateSubscription<TMessage>(Func<TMessage, Task> handler) where TMessage : class, IMessage;
+        ISubscription CreateSubscription<TMessage>(IEndpoint endpoint, Func<TMessage, Task> handler) where TMessage : class, IMessage;
 
         IList<ISubscription> ResolveSubscriptions<TMessage>();
         IList<ISubscription> ResolveSubscriptions(string messageType);

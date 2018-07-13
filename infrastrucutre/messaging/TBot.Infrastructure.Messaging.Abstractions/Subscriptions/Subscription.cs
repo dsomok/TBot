@@ -10,15 +10,18 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Subscriptions
         private readonly Func<IMessage, Task> _handler;
 
 
-        public Subscription(ISubscriptionsRegistry registry, Func<TMessage, Task> handler)
+        public Subscription(ISubscriptionsRegistry registry, IEndpoint endpoint, Func<TMessage, Task> handler)
         {
             Id = Guid.NewGuid();
             _registry = registry;
+            Endpoint = endpoint;
             _handler = message => this.Handle(message, handler);
         }
 
 
         public Guid Id { get; }
+
+        public IEndpoint Endpoint { get; }
 
         public Type Type => typeof(TMessage);
 

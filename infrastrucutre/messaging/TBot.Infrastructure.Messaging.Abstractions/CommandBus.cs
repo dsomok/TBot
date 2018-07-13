@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Serilog;
 using TBot.Infrastructure.Messaging.Abstractions.Messages;
 using TBot.Infrastructure.Messaging.Abstractions.Subscriptions;
+using TBot.Infrastructure.Messaging.Abstractions.Topology;
 
 namespace TBot.Infrastructure.Messaging.Abstractions
 {
@@ -11,42 +12,37 @@ namespace TBot.Infrastructure.Messaging.Abstractions
     {
         private readonly IMessageBuilder _messageBuilder;
         private readonly ISubscriptionsRegistry _subscriptionsRegistry;
-        private readonly IPublisher _publisher;
-        private readonly ISubscriber _subscriber;
+        private readonly ITopology _topology;
         private readonly ISerializer _serializer;
         private readonly ILogger _logger;
 
 
 
-        public CommandBus(
-            IMessageBuilder messageBuilder, 
+        public CommandBus
+        (
+            IMessageBuilder messageBuilder,
             ISubscriptionsRegistry subscriptionsRegistry, 
-            IPublisher publisher, 
-            ISubscriber subscriber, 
-            ISerializer serializer, 
+            ITopology topology,
+            ISerializer serializer,
             ILogger logger
-                )
+        )
         {
             _messageBuilder = messageBuilder;
             _subscriptionsRegistry = subscriptionsRegistry;
-            _publisher = publisher;
-            _subscriber = subscriber;
+            _topology = topology;
             _serializer = serializer;
             _logger = logger;
         }
 
 
-
-        public Task SubscribeForAllMessages()
-        {
-            return this._subscriber.Subscribe(this.OnCommand);
-        }
-
-        public Task<ISubscription> RegisterHandler<TCommand>(string service, Func<TCommand, Task> handler) 
+        public async Task<ISubscription> RegisterHandler<TCommand>(string service, Func<TCommand, Task> handler) 
             where TCommand : class, ICommand
         {
-            var subscription = this._subscriptionsRegistry.CreateSubscription(handler);
-            return Task.FromResult(subscription);
+            var endpoint = this._topology.ResolveSubscriptionEndpoint<TCommand>(service);
+            await endpoint.Subscribe(OnCommand);
+
+            var subscription = this._subscriptionsRegistry.CreateSubscription(endpoint, handler);
+            return subscription;
         }
 
         public Task Send<TCommand>(string service, TCommand command) 
@@ -55,7 +51,8 @@ namespace TBot.Infrastructure.Messaging.Abstractions
             var topic = $"Command.{service}.{typeof(TCommand).Name}";
             var message = this._messageBuilder.Build(topic, command);
 
-            return this._publisher.Publish(message);
+            var endpoint = this._topology.ResolvePublishingEndpoint<TCommand>(service, message);
+            return endpoint.Publish(message);
         }
 
 

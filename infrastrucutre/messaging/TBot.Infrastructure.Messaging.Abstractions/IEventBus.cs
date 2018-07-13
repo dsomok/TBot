@@ -7,8 +7,6 @@ namespace TBot.Infrastructure.Messaging.Abstractions
 {
     public interface IEventBus
     {
-        Task SubscribeForAllMessages();
-
         Task<ISubscription> Subscribe<TEvent>(Func<TEvent, Task> handler) where TEvent : class, IEvent;
 
         Task Publish<TEvent>(TEvent @event) where TEvent : class, IEvent;

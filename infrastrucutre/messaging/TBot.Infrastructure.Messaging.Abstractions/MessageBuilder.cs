@@ -6,6 +6,13 @@ namespace TBot.Infrastructure.Messaging.Abstractions
     {
         private readonly ISerializer _serializer;
 
+
+        public MessageBuilder(ISerializer serializer)
+        {
+            _serializer = serializer;
+        }
+
+
         public Message Build<TMessage>(string topic, TMessage message) 
             where TMessage : class, IMessage
         {

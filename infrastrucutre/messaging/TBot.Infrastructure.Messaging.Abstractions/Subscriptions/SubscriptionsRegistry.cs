@@ -10,9 +10,9 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Subscriptions
         private readonly IDictionary<string, IList<ISubscription>> _subscriptions = new Dictionary<string, IList<ISubscription>>();
 
 
-        public ISubscription CreateSubscription<TMessage>(Func<TMessage, Task> handler) where TMessage : class, IMessage
+        public ISubscription CreateSubscription<TMessage>(IEndpoint endpoint, Func<TMessage, Task> handler) where TMessage : class, IMessage
         {
-            var subscription = new Subscription<TMessage>(this, handler);
+            var subscription = new Subscription<TMessage>(this, endpoint, handler);
 
             var key = this.GetKey<TMessage>();
 
