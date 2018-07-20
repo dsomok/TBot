@@ -1,7 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using TBot.Infrastructure.Bots;
 using TBot.Infrastructure.Hosting.Console;
+using TBot.Infrastructure.Messaging.Abstractions.Hosting;
+using TBot.Infrastructure.Messaging.RabbitMQ;
+using TBot.TestBot.Handlers;
 
 namespace TBot.TestBot.Host
 {
@@ -9,13 +13,25 @@ namespace TBot.TestBot.Host
     {
         static async Task Main(string[] args)
         {
+            var serviceName = "TestBot";
             var host = ConsoleHostBuilder
                        .Create()
+                       .WithName(serviceName)
                        .WithConfiguration(configurationBuilder =>
                            {
                                configurationBuilder.AddJsonFile("appsettings.json");
                            })
                        .WithLogger(loggerConfiguration => loggerConfiguration.WriteTo.Console())
+                       .WithMessaging(serviceName, typeof(StartCommandHandler).Assembly)
+                       .WithRabbitMQMessaging(config => new RabbitMQMessagingSettings(
+                            hostName: config["RabbitMQ:HostName"],
+                            userName: config["RabbitMQ:UserName"],
+                            password: config["RabbitMQ:Password"])
+                       )
+                       .WithTelegramBot(config => new TelegramBotSettings(
+                           name: config["botName"],
+                           token: config["botToken"])
+                       )
                        .Build();
 
             await host.Run();

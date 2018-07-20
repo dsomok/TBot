@@ -8,4 +8,8 @@
     <Folder Include="Events\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\messaging\TBot.Infrastructure.Messaging.Abstractions\TBot.Infrastructure.Messaging.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

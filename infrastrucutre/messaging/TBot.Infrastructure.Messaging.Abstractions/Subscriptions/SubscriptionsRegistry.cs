@@ -1,18 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Serilog;
+using TBot.Infrastructure.Messaging.Abstractions.Endpoints;
 using TBot.Infrastructure.Messaging.Abstractions.Messages;
 
 namespace TBot.Infrastructure.Messaging.Abstractions.Subscriptions
 {
     class SubscriptionsRegistry : ISubscriptionsRegistry
     {
+        private readonly ISerializer _serializer;
+        private readonly ILogger _logger;
+
         private readonly IDictionary<string, IList<ISubscription>> _subscriptions = new Dictionary<string, IList<ISubscription>>();
 
 
-        public ISubscription CreateSubscription<TMessage>(IEndpoint endpoint, Func<TMessage, Task> handler) where TMessage : class, IMessage
+        public SubscriptionsRegistry(ISerializer serializer, ILogger logger)
         {
-            var subscription = new Subscription<TMessage>(this, endpoint, handler);
+            _serializer = serializer;
+            _logger = logger;
+        }
+
+
+        public ISubscription CreateSubscription<TMessage>(IEndpoint endpoint, Func<TMessage, Task<bool>> handler) where TMessage : class, IMessage
+        {
+            return this.CreateSubscription(
+                endpoint,
+                (TMessage response, Message message) => handler(response)
+            );
+        }
+
+        public ISubscription CreateSubscription<TMessage>(IEndpoint endpoint, Func<TMessage, Message, Task<bool>> handler) where TMessage : class, IMessage
+        {
+            var subscription = new Subscription<TMessage>(this, this._serializer, this._logger, endpoint, handler);
 
             var key = this.GetKey<TMessage>();
 
@@ -22,7 +42,7 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Subscriptions
             }
             else
             {
-                this._subscriptions.Add(key, new List<ISubscription> {subscription});
+                this._subscriptions.Add(key, new List<ISubscription> { subscription });
             }
 
             return subscription;

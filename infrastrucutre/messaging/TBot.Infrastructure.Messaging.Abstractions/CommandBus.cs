@@ -2,6 +2,7 @@
 using System.Data;
 using System.Threading.Tasks;
 using Serilog;
+using TBot.Infrastructure.Hosting.Abstractions;
 using TBot.Infrastructure.Messaging.Abstractions.Messages;
 using TBot.Infrastructure.Messaging.Abstractions.Subscriptions;
 using TBot.Infrastructure.Messaging.Abstractions.Topology;
@@ -13,8 +14,8 @@ namespace TBot.Infrastructure.Messaging.Abstractions
         private readonly IMessageBuilder _messageBuilder;
         private readonly ISubscriptionsRegistry _subscriptionsRegistry;
         private readonly ITopology _topology;
-        private readonly ISerializer _serializer;
         private readonly ILogger _logger;
+        private readonly HostContext _hostContext;
 
 
 
@@ -23,49 +24,87 @@ namespace TBot.Infrastructure.Messaging.Abstractions
             IMessageBuilder messageBuilder,
             ISubscriptionsRegistry subscriptionsRegistry, 
             ITopology topology,
-            ISerializer serializer,
-            ILogger logger
+            ILogger logger,
+            HostContext hostContext
         )
         {
             _messageBuilder = messageBuilder;
             _subscriptionsRegistry = subscriptionsRegistry;
             _topology = topology;
-            _serializer = serializer;
             _logger = logger;
+            _hostContext = hostContext;
         }
 
 
         public async Task<ISubscription> RegisterHandler<TCommand>(string service, Func<TCommand, Task> handler) 
             where TCommand : class, ICommand
         {
-            var endpoint = this._topology.ResolveSubscriptionEndpoint<TCommand>(service);
+            var endpoint = this._topology.ResolveCommandSubscriptionEndpoint<TCommand>(service);
             await endpoint.Subscribe(OnCommand);
 
-            var subscription = this._subscriptionsRegistry.CreateSubscription(endpoint, handler);
+            var subscription = this._subscriptionsRegistry.CreateSubscription<TCommand>(endpoint, async command =>
+            {
+                try
+                {
+                    await handler(command);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    this._logger.Warning(ex, "Failed to handle {CommandType} command.", typeof(TCommand).Name);
+                    return false;
+                }
+            });
             return subscription;
         }
 
         public Task Send<TCommand>(string service, TCommand command) 
             where TCommand : class, ICommand
         {
-            var topic = $"Command.{service}.{typeof(TCommand).Name}";
+            var topic = this._topology.GetCommandTopic<TCommand>(service);
             var message = this._messageBuilder.Build(topic, command);
 
-            var endpoint = this._topology.ResolvePublishingEndpoint<TCommand>(service, message);
+            var endpoint = this._topology.ResolveCommandPublishingEndpoint<TCommand>(service, message);
             return endpoint.Publish(message);
         }
 
+        public async Task<TResponse> Send<TCommand, TResponse>(string service, TCommand command) 
+            where TCommand : class, ICommand 
+            where TResponse : class, IMessage
+        {
+            var topic = this._topology.GetCommandTopic<TCommand>(service);
+            var replyToEndpoint = this._topology.ResolveCommandReplyToEndpoint<TCommand>(this._hostContext);
+            var message = this._messageBuilder.Build(topic, command, replyToEndpoint);
+
+            var responseAwaiter = new TaskCompletionSource<TResponse>();
+
+            var responseSubscription = this._subscriptionsRegistry.CreateSubscription<TResponse>(
+                replyToEndpoint,
+                (response, responseMessage) =>
+                {
+                    if (responseMessage.ReplyToMessage == message.CorrelationId)
+                    {
+                        responseAwaiter.SetResult(response);
+                        return Task.FromResult(true);
+                    }
+
+                    return Task.FromResult(false);
+                }
+            );
+
+            using (responseSubscription)
+            {
+                var endpoint = this._topology.ResolveCommandPublishingEndpoint<TCommand>(service, message);
+                await endpoint.Publish(message);
+
+                return await responseAwaiter.Task;
+            }
+        }
 
 
         private async Task<bool> OnCommand(Message message)
         {
             var commandType = message.BodyType;
-            var command = this._serializer.Deserialize(message.Body) as IMessage;
-            if (command == null)
-            {
-                this._logger.Warning("Failed to deserialize command of type {CommandType}", commandType);
-                throw new InvalidCastException($"Failed to deserialize command of type {commandType}");
-            }
 
             var subscriptions = this._subscriptionsRegistry.ResolveSubscriptions(commandType);
 
@@ -83,8 +122,7 @@ namespace TBot.Infrastructure.Messaging.Abstractions
 
             var subscription = subscriptions[0];
 
-            await subscription.Handle(command);
-            return true;
+            return await subscription.Handle(message);
         }
     }
 }

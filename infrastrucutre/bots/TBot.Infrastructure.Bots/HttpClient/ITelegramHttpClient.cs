@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace TBot.Infrastructure.Bots.HttpClient
 {
     internal interface ITelegramHttpClient
     {
-        System.Threading.Tasks.Task<dynamic> Post(Uri uri, object body = null);
+        Task<dynamic> Post(Uri uri, object body = null);
     }
 }

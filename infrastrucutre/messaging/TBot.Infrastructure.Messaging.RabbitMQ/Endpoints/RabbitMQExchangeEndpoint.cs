@@ -1,26 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using TBot.Infrastructure.Messaging.Abstractions;
+using TBot.Infrastructure.Messaging.Abstractions.Endpoints;
 
-namespace TBot.Infrastructure.Messaging.RabbitMQ
+namespace TBot.Infrastructure.Messaging.RabbitMQ.Endpoints
 {
-    class RabbitMQQueueEndpoint : IEndpoint
+    class RabbitMQExchangeEndpoint : IEndpoint
     {
         private readonly IConnection _connection;
         private readonly IModel _channel;
         private readonly EventingBasicConsumer _consumer;
 
 
-        public RabbitMQQueueEndpoint(string name)
+        public RabbitMQExchangeEndpoint(string name, string type, ConnectionFactory connectionFactory)
         {
             Name = name;
-            var factory = new ConnectionFactory() { HostName = "localhost" };
-            this._connection = factory.CreateConnection();
+            Type = type;
+
+            this._connection = connectionFactory.CreateConnection();
             this._channel = this._connection.CreateModel();
             this._consumer = new EventingBasicConsumer(this._channel);
 
@@ -30,15 +30,7 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ
 
         public string Name { get; }
 
-
-        public void Bind(string exchangeName, string routingKey)
-        {
-            this._channel.QueueBind(
-                queue: this.Name,
-                exchange: exchangeName,
-                routingKey: routingKey
-            );
-        }
+        public string Type { get; }
 
 
         public Task Publish(Message message)
@@ -49,8 +41,8 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ
             props.Type = message.BodyType;
 
             this._channel.BasicPublish(
-                exchange: string.Empty,
-                routingKey: this.Name,
+                exchange: this.Name,
+                routingKey: message.Topic,
                 basicProperties: props,
                 body: message.Body
             );
@@ -60,15 +52,7 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ
 
         public Task Subscribe(Func<Message, Task<bool>> handler)
         {
-            this._consumer.Received += (model, args) => this.Handle(args, handler);
-
-            this._channel.BasicConsume(
-                queue: this.Name,
-                autoAck: false,
-                consumer: this._consumer
-            );
-
-            return Task.CompletedTask;
+            throw new InvalidOperationException("Exchange cannot be subscribed to");
         }
 
         public void Dispose()
@@ -77,13 +61,13 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ
             this._connection?.Dispose();
         }
 
-
+        
         private void Create()
         {
-            this._channel.QueueDeclare(
-                queue: this.Name,
+            this._channel.ExchangeDeclare(
+                exchange: this.Name,
+                type: this.Type,
                 durable: true,
-                exclusive: false,
                 autoDelete: false,
                 arguments: null
             );

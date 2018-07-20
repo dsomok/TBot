@@ -5,10 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.8.1" />
     <PackageReference Include="Serilog" Version="2.7.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\hosting\TBot.Infrastructure.Hosting.Abstractions\TBot.Infrastructure.Hosting.Abstractions.csproj" />
     <ProjectReference Include="..\..\TBot.Infrastructure\TBot.Infrastructure.csproj" />
   </ItemGroup>
 

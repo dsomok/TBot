@@ -13,7 +13,6 @@ namespace TBot.Infrastructure.Messaging.Abstractions
         private readonly IMessageBuilder _messageBuilder;
         private readonly ISubscriptionsRegistry _subscriptionsRegistry;
         private readonly ITopology _topology;
-        private readonly ISerializer _serializer;
         private readonly ILogger _logger;
 
 
@@ -21,34 +20,44 @@ namespace TBot.Infrastructure.Messaging.Abstractions
         (
             IMessageBuilder messageBuilder, 
             ISubscriptionsRegistry subscriptionsRegistry, 
-            ITopology topology, 
-            ISerializer serializer, 
+            ITopology topology,
             ILogger logger
         )
         {
             _messageBuilder = messageBuilder;
             _subscriptionsRegistry = subscriptionsRegistry;
             _topology = topology;
-            _serializer = serializer;
             _logger = logger;
         }
 
 
-        public async Task<ISubscription> Subscribe<TEvent>(Func<TEvent, Task> handler) where TEvent : class, IEvent
+        public async Task<ISubscription> Subscribe<TEvent>(string service, Func<TEvent, Task> handler) where TEvent : class, IEvent
         {
-            var endpoint = this._topology.ResolveSubscriptionEndpoint<TEvent>();
+            var endpoint = this._topology.ResolveEventSubscriptionEndpoint<TEvent>(service);
             await endpoint.Subscribe(OnEvent);
 
-            var subscription = this._subscriptionsRegistry.CreateSubscription(endpoint, handler);
+            var subscription = this._subscriptionsRegistry.CreateSubscription<TEvent>(endpoint, async @event =>
+            {
+                try
+                {
+                    await handler(@event);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    this._logger.Warning(ex, "Failed to handle {EventType} event.", typeof(TEvent).Name);
+                    return false;
+                }
+            });
             return subscription;
         }
 
         public Task Publish<TEvent>(TEvent @event) where TEvent : class, IEvent
         {
-            var topic = $"Event.{typeof(TEvent).Name}";
+            var topic = this._topology.GetEventTopic<TEvent>();
             var message = this._messageBuilder.Build(topic, @event);
 
-            var endpoint = this._topology.ResolvePublishingEndpoint<TEvent>(message);
+            var endpoint = this._topology.ResolveEventPublishingEndpoint<TEvent>(message);
             return endpoint.Publish(message);
         }
 
@@ -57,12 +66,6 @@ namespace TBot.Infrastructure.Messaging.Abstractions
         private async Task<bool> OnEvent(Message message)
         {
             var eventType = message.BodyType;
-            var @event = this._serializer.Deserialize(message.Body) as IMessage;
-            if (@event == null)
-            {
-                this._logger.Warning("Failed to deserialize event of type {EventType}", eventType);
-                throw new InvalidCastException($"Failed to deserialize event of type {eventType}");
-            }
 
             var subscriptions = this._subscriptionsRegistry.ResolveSubscriptions(eventType);
 
@@ -73,7 +76,7 @@ namespace TBot.Infrastructure.Messaging.Abstractions
             }
 
             await Task.WhenAll(
-                subscriptions.Select(subscription => subscription.Handle(@event))
+                subscriptions.Select(subscription => subscription.Handle(message))
             );
 
             return true;

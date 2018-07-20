@@ -18,6 +18,13 @@ namespace TBot.Infrastructure.Hosting.Console
         protected override IConsoleHostBuilder Builder => this;
 
 
+        public IConsoleHostBuilder WithName(string name)
+        {
+            System.Console.Title = name;
+            return this;
+        }
+
+
         public override IHost Build()
         {
             var container = this.ContainerBuilder.Build();

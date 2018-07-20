@@ -1,6 +1,8 @@
-﻿namespace TBot.Infrastructure.Bots.Contracts.Commands
+﻿using TBot.Infrastructure.Messaging.Abstractions.Messages;
+
+namespace TBot.Infrastructure.Bots.Contracts.Commands
 {
-    public class StartCommand
+    public class StartCommand : ICommand
     {
     }
 }

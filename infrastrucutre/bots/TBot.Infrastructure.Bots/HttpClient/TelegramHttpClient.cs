@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +19,8 @@ namespace TBot.Infrastructure.Bots.HttpClient
 
         public async Task<dynamic> Post(Uri uri, object body = null)
         {
-            var content = new StringContent(body?.ToString(), Encoding.UTF8, "application/json");
+            var json = this._serializer.Serialize(body);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await this._httpClient.PostAsync(uri, content);
 
             if (!response.IsSuccessStatusCode)
@@ -31,7 +31,7 @@ namespace TBot.Infrastructure.Bots.HttpClient
             var responseString = await response.Content.ReadAsStringAsync();
 
             var responseData = this._serializer.Deserialize<dynamic>(responseString);
-            if (!responseData.ok)
+            if (responseData.ok != true)
             {
                 throw new Exception("Telegram API request was not successfull");
             }

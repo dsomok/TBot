@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Serilog;
@@ -33,9 +32,9 @@ namespace TBot.Infrastructure.Bots.Api
                     max_connections = maxConnections
                 };
 
-                await this._client.Post(uri, body);
+                var result = await this._client.Post(uri, body);
 
-                return true;
+                return result == true;
             }
             catch (Exception ex)
             {
@@ -56,9 +55,9 @@ namespace TBot.Infrastructure.Bots.Api
                     allowed_updates = allowedUpdates.ToArray()
                 };
 
-                await this._client.Post(uri, body);
+                var result = await this._client.Post(uri, body);
 
-                return true;
+                return result == true;
             }
             catch (Exception ex)
             {

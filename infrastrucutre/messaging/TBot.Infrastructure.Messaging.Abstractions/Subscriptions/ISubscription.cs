@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using TBot.Infrastructure.Messaging.Abstractions.Messages;
 
 namespace TBot.Infrastructure.Messaging.Abstractions.Subscriptions
 {
@@ -9,6 +8,6 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Subscriptions
         Guid Id { get; }
         Type Type { get; }
 
-        Task Handle(IMessage message);
+        Task<bool> Handle(Message message);
     }
 }

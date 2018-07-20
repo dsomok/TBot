@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+﻿using System.Text;
 using Newtonsoft.Json;
 
 namespace TBot.Infrastructure
@@ -10,6 +7,11 @@ namespace TBot.Infrastructure
     {
         public string Serialize<T>(T data)
         {
+            if (data == null)
+            {
+                return string.Empty;
+            }
+
             return JsonConvert.SerializeObject(data, Formatting.None, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,

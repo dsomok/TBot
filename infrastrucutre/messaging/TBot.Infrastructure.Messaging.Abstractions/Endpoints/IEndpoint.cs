@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace TBot.Infrastructure.Messaging.Abstractions
+namespace TBot.Infrastructure.Messaging.Abstractions.Endpoints
 {
     public interface IEndpoint : IDisposable
     {

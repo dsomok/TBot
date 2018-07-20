@@ -6,8 +6,10 @@ using Serilog;
 
 namespace TBot.Infrastructure.Hosting.Abstractions
 {
-    public interface IHostBuilder<TBuilder>
+    public interface IHostBuilder<TBuilder> 
+        where TBuilder : IHostBuilder<TBuilder>
     {
+        TBuilder AsService(string serviceName);
         TBuilder WithConfiguration(Action<IConfigurationBuilder> configuration);
         TBuilder WithLogger(Func<LoggerConfiguration, LoggerConfiguration> configuration);
         TBuilder WithServices(Action<ContainerBuilder> configuration);

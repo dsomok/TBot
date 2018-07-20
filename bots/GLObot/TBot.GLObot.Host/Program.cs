@@ -1,39 +1,38 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using TBot.Infrastructure.Hosting.AspNetCore;
-using TBot.Infrastructure.Messaging.Abstractions.Hosting;
+using TBot.Infrastructure.Bots;
+using TBot.Infrastructure.Hosting.Console;
 using TBot.Infrastructure.Messaging.RabbitMQ;
 
-namespace TBot.Api
+namespace TBot.GLObot.Host
 {
-    public class Program
+    class Program
     {
-        public static async Task Main(string[] args)
+        static async Task Main(string[] args)
         {
-            var serviceName = "TBot.Api";
-            var host = AspNetCoreHostBuilder
+            var serviceName = "GLObot";
+            var host = ConsoleHostBuilder
                        .Create()
-                       .WithConfiguration(configurationBuilder => {
+                       .WithName(serviceName)
+                       .WithConfiguration(configurationBuilder =>
+                       {
                            configurationBuilder.AddJsonFile("appsettings.json");
                        })
                        .WithLogger(loggerConfiguration => loggerConfiguration.WriteTo.Console())
-                       .WithMessaging(serviceName)
+                       //.WithMessaging(serviceName, typeof(StartCommandHandler).Assembly)
                        .WithRabbitMQMessaging(config => new RabbitMQMessagingSettings(
                            hostName: config["RabbitMQ:HostName"],
                            userName: config["RabbitMQ:UserName"],
                            password: config["RabbitMQ:Password"])
                        )
-                       .WithWebHost(() => BuildWebHost(args))
+                       .WithTelegramBot(config => new TelegramBotSettings(
+                           name: config["botName"],
+                           token: config["botToken"])
+                       )
                        .Build();
 
             await host.Run();
         }
-
-        public static IWebHostBuilder BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                   .UseStartup<Startup>();
     }
 }

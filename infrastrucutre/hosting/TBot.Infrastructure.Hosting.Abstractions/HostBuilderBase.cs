@@ -7,7 +7,8 @@ using Serilog;
 
 namespace TBot.Infrastructure.Hosting.Abstractions
 {
-    public abstract class HostBuilderBase<TBuilder> : IHostBuilder<TBuilder>
+    public abstract class HostBuilderBase<TBuilder> : IHostBuilder<TBuilder> 
+        where TBuilder : IHostBuilder<TBuilder>
     {
         protected readonly ContainerBuilder ContainerBuilder = new ContainerBuilder();
         protected IConfiguration Configuration = new ConfigurationRoot(new List<IConfigurationProvider>());
@@ -21,6 +22,14 @@ namespace TBot.Infrastructure.Hosting.Abstractions
 
         protected abstract TBuilder Builder { get; }
 
+
+        public TBuilder AsService(string serviceName)
+        {
+            var hostContext = new HostContext(serviceName);
+            this.ContainerBuilder.RegisterInstance(hostContext).AsSelf();
+
+            return this.Builder;
+        }
 
         public TBuilder WithConfiguration(Action<IConfigurationBuilder> configurator)
         {

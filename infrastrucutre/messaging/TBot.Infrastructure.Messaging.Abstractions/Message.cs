@@ -32,6 +32,8 @@ namespace TBot.Infrastructure.Messaging.Abstractions
 
         public string ReplyTo { get; }
 
+        public Guid? ReplyToMessage { get; }
+
         public string Topic { get; }
 
         public string BodyType { get; }

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.Api", "api\TBot.Api\TBot.Api.csproj", "{ABA30DB1-C598-4677-920B-F6F092C816AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.Api", "api\TBot.Api\TBot.Api.csproj", "{ABA30DB1-C598-4677-920B-F6F092C816AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{30C89C3D-67EB-4BC4-B87C-33AAFE2D3A07}"
 EndProject
@@ -15,31 +15,33 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosting", "Hosting", "{EB87
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messaging", "Messaging", "{64CD76AC-413F-4BA5-B91B-BDC8D3F0E845}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.Infrastructure.Hosting.Abstractions", "infrastrucutre\hosting\TBot.Infrastructure.Hosting.Abstractions\TBot.Infrastructure.Hosting.Abstractions.csproj", "{AFDC646E-0550-4E4C-8F6C-015FFE8BFF7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.Infrastructure.Hosting.Abstractions", "infrastrucutre\hosting\TBot.Infrastructure.Hosting.Abstractions\TBot.Infrastructure.Hosting.Abstractions.csproj", "{AFDC646E-0550-4E4C-8F6C-015FFE8BFF7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.Infrastructure.Hosting.AspNetCore", "infrastrucutre\hosting\TBot.Infrastructure.Hosting.AspNetCore\TBot.Infrastructure.Hosting.AspNetCore.csproj", "{9BEEF872-1763-471E-9531-CC6ED1A546B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.Infrastructure.Hosting.AspNetCore", "infrastrucutre\hosting\TBot.Infrastructure.Hosting.AspNetCore\TBot.Infrastructure.Hosting.AspNetCore.csproj", "{9BEEF872-1763-471E-9531-CC6ED1A546B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.Infrastructure.Hosting.Console", "infrastrucutre\hosting\TBot.Infrastructure.Hosting.Console\TBot.Infrastructure.Hosting.Console.csproj", "{10FD8E3F-FBFA-4C2E-AAC6-70943E9B9BB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.Infrastructure.Hosting.Console", "infrastrucutre\hosting\TBot.Infrastructure.Hosting.Console\TBot.Infrastructure.Hosting.Console.csproj", "{10FD8E3F-FBFA-4C2E-AAC6-70943E9B9BB4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestBot", "TestBot", "{6E6C6D2B-A6EC-458A-ACEC-201D5B9BCB7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.TestBot.Host", "bots\TestBot\TBot.TestBot.Host\TBot.TestBot.Host.csproj", "{DF8BC98E-E41B-48A3-9EA8-37F0370F07DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.TestBot.Host", "bots\TestBot\TBot.TestBot.Host\TBot.TestBot.Host.csproj", "{DF8BC98E-E41B-48A3-9EA8-37F0370F07DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.TestBot.Handlers", "bots\TestBot\TBot.TestBot.Handlers\TBot.TestBot.Handlers.csproj", "{A37E6F7B-BE8D-4F96-9511-19B500E6F3D2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.TestBot.Contracts", "bots\TestBot\TBot.TestBot.Contracts\TBot.TestBot.Contracts.csproj", "{BB733682-E05C-4E4B-87CA-1E8C9965B06F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.TestBot.Handlers", "bots\TestBot\TBot.TestBot.Handlers\TBot.TestBot.Handlers.csproj", "{A37E6F7B-BE8D-4F96-9511-19B500E6F3D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bots", "Bots", "{7DCE45E7-580A-4D53-9898-8AECB9C528E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.Infrastructure.Bots.Contracts", "infrastrucutre\bots\TBot.Infrastructure.Bots.Contracts\TBot.Infrastructure.Bots.Contracts.csproj", "{B5BDF7C0-5DEC-408B-A5A4-6B9E535EFECF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.Infrastructure.Bots.Contracts", "infrastrucutre\bots\TBot.Infrastructure.Bots.Contracts\TBot.Infrastructure.Bots.Contracts.csproj", "{B5BDF7C0-5DEC-408B-A5A4-6B9E535EFECF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.Infrastructure.Bots", "infrastrucutre\bots\TBot.Infrastructure.Bots\TBot.Infrastructure.Bots.csproj", "{C924D766-0BE6-4A76-A740-4264DE151CA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.Infrastructure.Bots", "infrastrucutre\bots\TBot.Infrastructure.Bots\TBot.Infrastructure.Bots.csproj", "{C924D766-0BE6-4A76-A740-4264DE151CA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.Infrastructure", "infrastrucutre\TBot.Infrastructure\TBot.Infrastructure.csproj", "{B65FEB11-9DDE-4E1C-8D52-0F9FC736736C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.Infrastructure", "infrastrucutre\TBot.Infrastructure\TBot.Infrastructure.csproj", "{B65FEB11-9DDE-4E1C-8D52-0F9FC736736C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.Infrastructure.Messaging.Abstractions", "infrastrucutre\messaging\TBot.Infrastructure.Messaging.Abstractions\TBot.Infrastructure.Messaging.Abstractions.csproj", "{7CC50E22-EF1C-45C2-9B65-C1B9206D1A88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.Infrastructure.Messaging.Abstractions", "infrastrucutre\messaging\TBot.Infrastructure.Messaging.Abstractions\TBot.Infrastructure.Messaging.Abstractions.csproj", "{7CC50E22-EF1C-45C2-9B65-C1B9206D1A88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.Infrastructure.Messaging.RabbitMQ", "infrastrucutre\messaging\TBot.Infrastructure.Messaging.RabbitMQ\TBot.Infrastructure.Messaging.RabbitMQ.csproj", "{895C02F5-AA0E-4E22-9D59-FD0EE1B79FD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.Infrastructure.Messaging.RabbitMQ", "infrastrucutre\messaging\TBot.Infrastructure.Messaging.RabbitMQ\TBot.Infrastructure.Messaging.RabbitMQ.csproj", "{895C02F5-AA0E-4E22-9D59-FD0EE1B79FD4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GLObot", "GLObot", "{6E48DF91-0BEB-429E-BD47-9F27EDD1EA66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.GLObot.Host", "bots\GLObot\TBot.GLObot.Host\TBot.GLObot.Host.csproj", "{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,10 +73,6 @@ Global
 		{A37E6F7B-BE8D-4F96-9511-19B500E6F3D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A37E6F7B-BE8D-4F96-9511-19B500E6F3D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A37E6F7B-BE8D-4F96-9511-19B500E6F3D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BB733682-E05C-4E4B-87CA-1E8C9965B06F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BB733682-E05C-4E4B-87CA-1E8C9965B06F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB733682-E05C-4E4B-87CA-1E8C9965B06F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BB733682-E05C-4E4B-87CA-1E8C9965B06F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B5BDF7C0-5DEC-408B-A5A4-6B9E535EFECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B5BDF7C0-5DEC-408B-A5A4-6B9E535EFECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5BDF7C0-5DEC-408B-A5A4-6B9E535EFECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -95,6 +93,10 @@ Global
 		{895C02F5-AA0E-4E22-9D59-FD0EE1B79FD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{895C02F5-AA0E-4E22-9D59-FD0EE1B79FD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{895C02F5-AA0E-4E22-9D59-FD0EE1B79FD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,13 +111,14 @@ Global
 		{6E6C6D2B-A6EC-458A-ACEC-201D5B9BCB7D} = {BA58CEF5-E33B-47E6-9DF3-16D1650458F5}
 		{DF8BC98E-E41B-48A3-9EA8-37F0370F07DE} = {6E6C6D2B-A6EC-458A-ACEC-201D5B9BCB7D}
 		{A37E6F7B-BE8D-4F96-9511-19B500E6F3D2} = {6E6C6D2B-A6EC-458A-ACEC-201D5B9BCB7D}
-		{BB733682-E05C-4E4B-87CA-1E8C9965B06F} = {6E6C6D2B-A6EC-458A-ACEC-201D5B9BCB7D}
 		{7DCE45E7-580A-4D53-9898-8AECB9C528E9} = {D8D5C3BE-4329-43F2-8A51-158F598C5CDF}
 		{B5BDF7C0-5DEC-408B-A5A4-6B9E535EFECF} = {7DCE45E7-580A-4D53-9898-8AECB9C528E9}
 		{C924D766-0BE6-4A76-A740-4264DE151CA9} = {7DCE45E7-580A-4D53-9898-8AECB9C528E9}
 		{B65FEB11-9DDE-4E1C-8D52-0F9FC736736C} = {D8D5C3BE-4329-43F2-8A51-158F598C5CDF}
 		{7CC50E22-EF1C-45C2-9B65-C1B9206D1A88} = {64CD76AC-413F-4BA5-B91B-BDC8D3F0E845}
 		{895C02F5-AA0E-4E22-9D59-FD0EE1B79FD4} = {64CD76AC-413F-4BA5-B91B-BDC8D3F0E845}
+		{6E48DF91-0BEB-429E-BD47-9F27EDD1EA66} = {BA58CEF5-E33B-47E6-9DF3-16D1650458F5}
+		{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B} = {6E48DF91-0BEB-429E-BD47-9F27EDD1EA66}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54BB428A-8503-418C-8985-F93392EABE31}

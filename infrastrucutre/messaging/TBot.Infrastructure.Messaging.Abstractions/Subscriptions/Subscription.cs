@@ -1,21 +1,33 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Serilog;
+using TBot.Infrastructure.Messaging.Abstractions.Endpoints;
 using TBot.Infrastructure.Messaging.Abstractions.Messages;
 
 namespace TBot.Infrastructure.Messaging.Abstractions.Subscriptions
 {
     class Subscription<TMessage> : ISubscription where TMessage : class, IMessage
     {
+        private readonly ISerializer _serializer;
         private readonly ISubscriptionsRegistry _registry;
-        private readonly Func<IMessage, Task> _handler;
+        private readonly ILogger _logger;
+        private readonly Func<IMessage, Message, Task<bool>> _handler;
 
 
-        public Subscription(ISubscriptionsRegistry registry, IEndpoint endpoint, Func<TMessage, Task> handler)
+        public Subscription(
+            ISubscriptionsRegistry registry,
+            ISerializer serializer,
+            ILogger logger, 
+            IEndpoint endpoint, 
+            Func<TMessage, Message, Task<bool>> handler
+        )
         {
             Id = Guid.NewGuid();
             _registry = registry;
+            _serializer = serializer;
+            _logger = logger;
             Endpoint = endpoint;
-            _handler = message => this.Handle(message, handler);
+            _handler = (iMessage, message) => this.Handle(iMessage, message, handler);
         }
 
 
@@ -26,20 +38,28 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Subscriptions
         public Type Type => typeof(TMessage);
 
         
-        public Task Handle(IMessage message)
+        public Task<bool> Handle(Message message)
         {
-            return this._handler.Invoke(message);
+            var messageType = message.BodyType;
+            var iMessage = this._serializer.Deserialize(message.Body) as IMessage;
+            if (iMessage == null)
+            {
+                this._logger.Warning("Failed to deserialize message of type {MessageType}", messageType);
+                throw new InvalidCastException($"Failed to deserialize message of type {messageType}");
+            }
+
+            return this._handler.Invoke(iMessage, message);
         }
         
 
-        private Task Handle(IMessage message, Func<TMessage, Task> handler)
+        private Task<bool> Handle(IMessage iMessage, Message message, Func<TMessage, Message, Task<bool>> handler)
         {
-            if (!(message is TMessage tMessage))
+            if (!(iMessage is TMessage tMessage))
             {
                 throw new InvalidCastException($"This subscription is not intended to handle messages of type {message.GetType().Name}");
             }
 
-            return handler(tMessage);
+            return handler(tMessage, message);
         }
         
 

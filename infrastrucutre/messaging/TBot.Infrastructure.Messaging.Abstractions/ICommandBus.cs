@@ -10,5 +10,9 @@ namespace TBot.Infrastructure.Messaging.Abstractions
         Task<ISubscription> RegisterHandler<TCommand>(string service, Func<TCommand, Task> handler) where TCommand : class, ICommand;
 
         Task Send<TCommand>(string service, TCommand command) where TCommand : class, ICommand;
+
+        Task<TResponse> Send<TCommand, TResponse>(string service, TCommand command)
+            where TCommand : class, ICommand
+            where TResponse : class, IMessage;
     }
 }
