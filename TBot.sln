@@ -41,7 +41,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.Infrastructure.Messagi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GLObot", "GLObot", "{6E48DF91-0BEB-429E-BD47-9F27EDD1EA66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.GLObot.Host", "bots\GLObot\TBot.GLObot.Host\TBot.GLObot.Host.csproj", "{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TBot.GLObot.Host", "bots\GLObot\TBot.GLObot.Host\TBot.GLObot.Host.csproj", "{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBot.TestBot.Contracts", "bots\TestBot\TBot.TestBot.Contracts\TBot.TestBot.Contracts.csproj", "{8A9E46E6-5341-4DE1-BC14-D8A1AFA2C9FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +99,10 @@ Global
 		{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A9E46E6-5341-4DE1-BC14-D8A1AFA2C9FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A9E46E6-5341-4DE1-BC14-D8A1AFA2C9FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A9E46E6-5341-4DE1-BC14-D8A1AFA2C9FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A9E46E6-5341-4DE1-BC14-D8A1AFA2C9FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -119,6 +125,7 @@ Global
 		{895C02F5-AA0E-4E22-9D59-FD0EE1B79FD4} = {64CD76AC-413F-4BA5-B91B-BDC8D3F0E845}
 		{6E48DF91-0BEB-429E-BD47-9F27EDD1EA66} = {BA58CEF5-E33B-47E6-9DF3-16D1650458F5}
 		{E008FFCF-DEE6-462D-B87D-06E5BB66DB7B} = {6E48DF91-0BEB-429E-BD47-9F27EDD1EA66}
+		{8A9E46E6-5341-4DE1-BC14-D8A1AFA2C9FE} = {6E6C6D2B-A6EC-458A-ACEC-201D5B9BCB7D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54BB428A-8503-418C-8985-F93392EABE31}

@@ -22,7 +22,7 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Hosting
         }
 
 
-        public List<(Type HandlerType, Type MessageType)> GetHandlers(Type genericHandlerType)
+        public List<(Type HandlerType, Type MessageType, Type ResponseType)> GetHandlers(Type genericHandlerType)
         {
             return (
                 from assembly in this._assemblies
@@ -31,7 +31,12 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Hosting
                 where implementedInterface.IsGenericType &&
                       implementedInterface.GetGenericTypeDefinition() == genericHandlerType
                 let commandType = implementedInterface.GenericTypeArguments.First()
-                select (HandlerType: type.UnderlyingSystemType, MessageType: commandType)
+                let responseType = implementedInterface.GenericTypeArguments.Skip(1).FirstOrDefault()
+                select (
+                    HandlerType: type.UnderlyingSystemType, 
+                    MessageType: commandType, 
+                    ResponseType: responseType
+                )
             ).ToList();
         }
 
@@ -44,6 +49,22 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Hosting
                 var registerProcess = builder.Build(
                     serviceName: this._service,
                     handleMethodName: nameof(ICommandHandler<ICommand>.Handle),
+                    messageBusRegistrationMethodName: nameof(ICommandBus.RegisterHandler)
+                );
+
+                await registerProcess;
+            }
+        }
+
+        public async Task RegisterCommandHandlersWithResponse(IContainer container)
+        {
+            var commandHandlers = this.GetHandlers(typeof(ICommandHandler<,>));
+            foreach (var handler in commandHandlers)
+            {
+                var builder = new RegistrationProcessBuilder<ICommandBus>(handler, container);
+                var registerProcess = builder.Build(
+                    serviceName: this._service,
+                    handleMethodName: nameof(ICommandHandler<ICommand, IMessage>.Handle),
                     messageBusRegistrationMethodName: nameof(ICommandBus.RegisterHandler)
                 );
 

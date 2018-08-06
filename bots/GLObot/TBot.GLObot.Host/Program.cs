@@ -14,7 +14,7 @@ namespace TBot.GLObot.Host
             var serviceName = "GLObot";
             var host = ConsoleHostBuilder
                        .Create()
-                       .WithName(serviceName)
+                       .AsService(serviceName)
                        .WithConfiguration(configurationBuilder =>
                        {
                            configurationBuilder.AddJsonFile("appsettings.json");
@@ -28,7 +28,8 @@ namespace TBot.GLObot.Host
                        )
                        .WithTelegramBot(config => new TelegramBotSettings(
                            name: config["botName"],
-                           token: config["botToken"])
+                           token: config["botToken"],
+                           apiURL: config["apiURL"])
                        )
                        .Build();
 

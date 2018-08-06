@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\bots\TestBot\TBot.TestBot.Contracts\TBot.TestBot.Contracts.csproj" />
     <ProjectReference Include="..\..\infrastrucutre\bots\TBot.Infrastructure.Bots.Contracts\TBot.Infrastructure.Bots.Contracts.csproj" />
     <ProjectReference Include="..\..\infrastrucutre\hosting\TBot.Infrastructure.Hosting.AspNetCore\TBot.Infrastructure.Hosting.AspNetCore.csproj" />
     <ProjectReference Include="..\..\infrastrucutre\messaging\TBot.Infrastructure.Messaging.RabbitMQ\TBot.Infrastructure.Messaging.RabbitMQ.csproj" />

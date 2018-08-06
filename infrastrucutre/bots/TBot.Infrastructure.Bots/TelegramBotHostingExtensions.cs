@@ -32,7 +32,7 @@ namespace TBot.Infrastructure.Bots
                            logger.Information("Deleted webhook for bot {Bot}", botSettings.Name);
                        }
 
-                       var webhookUrl = $"https://eadbfe0c.ngrok.io/{botSettings.Name}";
+                       var webhookUrl = $"{botSettings.ApiURL}/{botSettings.Name}";
                        if (await telegramApi.SetWebhook(botSettings.Token, webhookUrl))
                        {
                            logger.Information("Set webhook for bot {Bot}: {BotWebhook}", botSettings.Name, webhookUrl);

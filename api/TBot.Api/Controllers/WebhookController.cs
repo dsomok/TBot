@@ -4,6 +4,7 @@ using Serilog;
 using TBot.Api.Models;
 using TBot.Infrastructure.Bots.Contracts.Commands;
 using TBot.Infrastructure.Messaging.Abstractions;
+using TBot.TestBot.Contracts.Responses;
 
 namespace TBot.Api.Controllers
 {
@@ -31,9 +32,9 @@ namespace TBot.Api.Controllers
             this._logger.Information("Received update @{Update}", update);
 
             var command = new StartCommand();
-            await this._commandBus.Send(name, command);
+            var response = await this._commandBus.Send<StartCommand, TestBotResponse>(name, command);
 
-            return Ok();
+            return Ok(response.Message);
         }
 
     }

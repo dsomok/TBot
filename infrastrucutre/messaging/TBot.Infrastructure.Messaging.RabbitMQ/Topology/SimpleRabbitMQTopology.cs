@@ -2,6 +2,7 @@
 using TBot.Infrastructure.Hosting.Abstractions;
 using TBot.Infrastructure.Messaging.Abstractions;
 using TBot.Infrastructure.Messaging.Abstractions.Endpoints;
+using TBot.Infrastructure.Messaging.Abstractions.Exceptions;
 using TBot.Infrastructure.Messaging.Abstractions.Messages;
 using TBot.Infrastructure.Messaging.Abstractions.Topology;
 using TBot.Infrastructure.Messaging.RabbitMQ.Endpoints;
@@ -37,6 +38,8 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ.Topology
 
         public string GetCommandTopic<TCommand>(string service) where TCommand : ICommand 
             => $"Command.{service}.{typeof(TCommand).Name}";
+
+        public string GetResponseTopic<TResponse>() => "Response";
 
 
         public IEndpoint ResolveEventSubscriptionEndpoint<TEvent>(string service) where TEvent : IEvent
@@ -95,7 +98,18 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ.Topology
 
             return queueEndpoint;
         }
-        
+
+        public IEndpoint ResolveCommandReplyToEndpoint(string replyTo)
+        {
+            if (!this._endpointRegistry.TryGet(replyTo, out IEndpoint replyToEndpoint))
+            {
+                throw new EndpointNotFoundException(replyTo);
+            }
+
+            return replyToEndpoint;
+        }
+
+
 
         public void Dispose()
         {

@@ -9,11 +9,11 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Hosting
 {
     class RegistrationProcessBuilder<TBus> : IRegistrationExpressionBuilder<TBus>
     {
-        private readonly (Type HandlerType, Type MessageType) _handler;
+        private readonly (Type HandlerType, Type MessageType, Type ResponseType) _handler;
         private readonly IContainer _container;
 
 
-        public RegistrationProcessBuilder((Type HandlerType, Type MessageType) handler, IContainer container)
+        public RegistrationProcessBuilder((Type HandlerType, Type MessageType, Type ResponseType) handler, IContainer container)
         {
             _handler = handler;
             _container = container;

@@ -2,10 +2,11 @@
 using Serilog;
 using TBot.Infrastructure.Bots.Contracts.Commands;
 using TBot.Infrastructure.Messaging.Abstractions.Handlers;
+using TBot.TestBot.Contracts.Responses;
 
 namespace TBot.TestBot.Handlers
 {
-    public class StartCommandHandler : ICommandHandler<StartCommand>
+    public class StartCommandHandler : ICommandHandler<StartCommand, TestBotResponse>
     {
         private readonly ILogger _logger;
 
@@ -16,10 +17,13 @@ namespace TBot.TestBot.Handlers
         }
 
 
-        public Task Handle(StartCommand command)
+        public Task<TestBotResponse> Handle(StartCommand command)
         {
             this._logger.Information("{CommandType} command has been received", command.GetType().Name);
-            return Task.CompletedTask;
+
+            var response = new TestBotResponse("Hi");
+
+            return Task.FromResult(response);
         }
     }
 }

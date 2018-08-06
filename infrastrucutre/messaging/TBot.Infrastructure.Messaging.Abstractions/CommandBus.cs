@@ -58,6 +58,35 @@ namespace TBot.Infrastructure.Messaging.Abstractions
             return subscription;
         }
 
+        public async Task<ISubscription> RegisterHandler<TCommand, TResponse>(string service, Func<TCommand, Task<TResponse>> handler)
+            where TCommand : class, ICommand 
+            where TResponse : class, IMessage
+        {
+            var endpoint = this._topology.ResolveCommandSubscriptionEndpoint<TCommand>(service);
+            await endpoint.Subscribe(OnCommand);
+
+            var subscription = this._subscriptionsRegistry.CreateSubscription<TCommand>(endpoint, async (command, message) =>
+            {
+                try
+                {
+                    var replyToEndpoint = this._topology.ResolveCommandReplyToEndpoint(message.ReplyTo);
+                    var response = await handler(command);
+
+                    var responseTopic = this._topology.GetResponseTopic<TResponse>();
+                    var responseMessage = this._messageBuilder.Build(responseTopic, response);
+                    await replyToEndpoint.Publish(responseMessage);
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    this._logger.Warning(ex, "Failed to handle {CommandType} command.", typeof(TCommand).Name);
+                    return false;
+                }
+            });
+            return subscription;
+        }
+
         public Task Send<TCommand>(string service, TCommand command) 
             where TCommand : class, ICommand
         {
@@ -68,7 +97,7 @@ namespace TBot.Infrastructure.Messaging.Abstractions
             return endpoint.Publish(message);
         }
 
-        public async Task<TResponse> Send<TCommand, TResponse>(string service, TCommand command) 
+        public Task<TResponse> Send<TCommand, TResponse>(string service, TCommand command) 
             where TCommand : class, ICommand 
             where TResponse : class, IMessage
         {
@@ -91,7 +120,7 @@ namespace TBot.Infrastructure.Messaging.Abstractions
                     return Task.FromResult(false);
                 }
             );
-
+            
             using (responseSubscription)
             {
                 var endpoint = this._topology.ResolveCommandPublishingEndpoint<TCommand>(service, message);

@@ -26,6 +26,13 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Hosting
                            services.RegisterType(handler.HandlerType).As(iCommandHandlerType).AsSelf();
                        }
 
+                       var commandHandlersWithResponse = registrationsBuilder.GetHandlers(typeof(ICommandHandler<,>));
+                       foreach (var handler in commandHandlersWithResponse)
+                       {
+                           var iCommandHandlerType = typeof(ICommandHandler<,>).MakeGenericType(handler.MessageType, handler.ResponseType);
+                           services.RegisterType(handler.HandlerType).As(iCommandHandlerType).AsSelf();
+                       }
+
                        var eventHandlers = registrationsBuilder.GetHandlers(typeof(IEventHandler<>));
                        foreach (var handler in eventHandlers)
                        {
@@ -38,6 +45,7 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Hosting
                        var registrationsBuilder = container.Resolve<RegistrationsBuilder>();
 
                        await registrationsBuilder.RegisterCommandHandlers(container);
+                       await registrationsBuilder.RegisterCommandHandlersWithResponse(container);
                        await registrationsBuilder.RegisterEventHandlers(container);
                    });
         }

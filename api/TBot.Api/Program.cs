@@ -16,6 +16,7 @@ namespace TBot.Api
             var serviceName = "TBot.Api";
             var host = AspNetCoreHostBuilder
                        .Create()
+                       .AsService(serviceName)
                        .WithConfiguration(configurationBuilder => {
                            configurationBuilder.AddJsonFile("appsettings.json");
                        })

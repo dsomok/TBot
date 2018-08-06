@@ -4,6 +4,5 @@ namespace TBot.Infrastructure.Hosting.Console
 {
     public interface IConsoleHostBuilder : IHostBuilder<IConsoleHostBuilder>
     {
-        IConsoleHostBuilder WithName(string name);
     }
 }

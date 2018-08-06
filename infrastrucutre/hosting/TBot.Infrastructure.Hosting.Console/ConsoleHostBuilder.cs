@@ -18,12 +18,11 @@ namespace TBot.Infrastructure.Hosting.Console
         protected override IConsoleHostBuilder Builder => this;
 
 
-        public IConsoleHostBuilder WithName(string name)
+        public override IConsoleHostBuilder AsService(string serviceName)
         {
-            System.Console.Title = name;
-            return this;
+            System.Console.Title = serviceName;
+            return base.AsService(serviceName);
         }
-
 
         public override IHost Build()
         {

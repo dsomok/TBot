@@ -23,7 +23,7 @@ namespace TBot.Infrastructure.Hosting.Abstractions
         protected abstract TBuilder Builder { get; }
 
 
-        public TBuilder AsService(string serviceName)
+        public virtual TBuilder AsService(string serviceName)
         {
             var hostContext = new HostContext(serviceName);
             this.ContainerBuilder.RegisterInstance(hostContext).AsSelf();
@@ -31,7 +31,7 @@ namespace TBot.Infrastructure.Hosting.Abstractions
             return this.Builder;
         }
 
-        public TBuilder WithConfiguration(Action<IConfigurationBuilder> configurator)
+        public virtual TBuilder WithConfiguration(Action<IConfigurationBuilder> configurator)
         {
             var builder = new ConfigurationBuilder();
             configurator(builder);
@@ -43,7 +43,7 @@ namespace TBot.Infrastructure.Hosting.Abstractions
             return this.Builder;
         }
 
-        public TBuilder WithLogger(Func<LoggerConfiguration, LoggerConfiguration> loggerConfigurator)
+        public virtual TBuilder WithLogger(Func<LoggerConfiguration, LoggerConfiguration> loggerConfigurator)
         {
             var config = new LoggerConfiguration();
             config = loggerConfigurator(config);
@@ -54,25 +54,25 @@ namespace TBot.Infrastructure.Hosting.Abstractions
             return this.Builder;
         }
 
-        public TBuilder WithServices(Action<ContainerBuilder> serviceConfigurator)
+        public virtual TBuilder WithServices(Action<ContainerBuilder> serviceConfigurator)
         {
             serviceConfigurator(this.ContainerBuilder);
             return this.Builder;
         }
 
-        public TBuilder WithServices(Action<ContainerBuilder, IConfiguration> serviceConfigurator)
+        public virtual TBuilder WithServices(Action<ContainerBuilder, IConfiguration> serviceConfigurator)
         {
             serviceConfigurator(this.ContainerBuilder, this.Configuration);
             return this.Builder;
         }
 
-        public TBuilder OnStart(Func<IContainer, IConfiguration, Task> action)
+        public virtual TBuilder OnStart(Func<IContainer, IConfiguration, Task> action)
         {
             this.OnStartActions.Add(action);
             return this.Builder;
         }
 
-        public TBuilder OnStop(Func<IContainer, IConfiguration, Task> action)
+        public virtual TBuilder OnStop(Func<IContainer, IConfiguration, Task> action)
         {
             this.OnStopActions.Add(action);
             return this.Builder;
