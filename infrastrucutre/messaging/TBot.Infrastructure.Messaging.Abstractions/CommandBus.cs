@@ -40,7 +40,10 @@ namespace TBot.Infrastructure.Messaging.Abstractions
             where TCommand : class, ICommand
         {
             var endpoint = this._topology.ResolveCommandSubscriptionEndpoint<TCommand>(service);
-            await endpoint.Subscribe(OnCommand);
+            if (!endpoint.IsSubscribed)
+            {
+                await endpoint.Subscribe(OnCommand);
+            }
 
             var subscription = this._subscriptionsRegistry.CreateSubscription<TCommand>(endpoint, async command =>
             {
@@ -63,17 +66,21 @@ namespace TBot.Infrastructure.Messaging.Abstractions
             where TResponse : class, IMessage
         {
             var endpoint = this._topology.ResolveCommandSubscriptionEndpoint<TCommand>(service);
-            await endpoint.Subscribe(OnCommand);
+            if (!endpoint.IsSubscribed)
+            {
+                await endpoint.Subscribe(OnCommand);
+            }
 
             var subscription = this._subscriptionsRegistry.CreateSubscription<TCommand>(endpoint, async (command, message) =>
             {
                 try
                 {
-                    var replyToEndpoint = this._topology.ResolveCommandReplyToEndpoint(message.ReplyTo);
                     var response = await handler(command);
 
                     var responseTopic = this._topology.GetResponseTopic<TResponse>();
-                    var responseMessage = this._messageBuilder.Build(responseTopic, response);
+                    var responseMessage = this._messageBuilder.Build(responseTopic, message.CorrelationId, response);
+
+                    var replyToEndpoint = this._topology.ResolveCommandReplyToEndpoint(message.ReplyTo);
                     await replyToEndpoint.Publish(responseMessage);
 
                     return true;
@@ -84,8 +91,10 @@ namespace TBot.Infrastructure.Messaging.Abstractions
                     return false;
                 }
             });
+
             return subscription;
         }
+
 
         public Task Send<TCommand>(string service, TCommand command) 
             where TCommand : class, ICommand
@@ -105,29 +114,16 @@ namespace TBot.Infrastructure.Messaging.Abstractions
             var replyToEndpoint = this._topology.ResolveCommandReplyToEndpoint<TCommand>(this._hostContext);
             var message = this._messageBuilder.Build(topic, command, replyToEndpoint);
 
-            var responseAwaiter = new TaskCompletionSource<TResponse>();
-
-            var responseSubscription = this._subscriptionsRegistry.CreateSubscription<TResponse>(
-                replyToEndpoint,
-                (response, responseMessage) =>
-                {
-                    if (responseMessage.ReplyToMessage == message.CorrelationId)
-                    {
-                        responseAwaiter.SetResult(response);
-                        return Task.FromResult(true);
-                    }
-
-                    return Task.FromResult(false);
-                }
+            var responseAwaiter = new ResponseAwaiter<TResponse>(
+                correlationId: message.CorrelationId,
+                subscriptionsRegistry: this._subscriptionsRegistry,
+                responseEndpoint: replyToEndpoint
             );
-            
-            using (responseSubscription)
-            {
-                var endpoint = this._topology.ResolveCommandPublishingEndpoint<TCommand>(service, message);
-                await endpoint.Publish(message);
 
-                return await responseAwaiter.Task;
-            }
+            var endpoint = this._topology.ResolveCommandPublishingEndpoint<TCommand>(service, message);
+            endpoint.Publish(message);
+
+            return responseAwaiter.WaitAsync();
         }
 
 

@@ -2,7 +2,6 @@
 using TBot.Infrastructure.Hosting.Abstractions;
 using TBot.Infrastructure.Messaging.Abstractions;
 using TBot.Infrastructure.Messaging.Abstractions.Endpoints;
-using TBot.Infrastructure.Messaging.Abstractions.Exceptions;
 using TBot.Infrastructure.Messaging.Abstractions.Messages;
 using TBot.Infrastructure.Messaging.Abstractions.Topology;
 using TBot.Infrastructure.Messaging.RabbitMQ.Endpoints;
@@ -89,21 +88,16 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ.Topology
 
         public IEndpoint ResolveCommandReplyToEndpoint<TResponse>(HostContext hostContext) where TResponse : IMessage
         {
-            var queueName = $"{hostContext.ServiceName}.Responses.{typeof(TResponse).FullName}";
-            if (!this._endpointRegistry.TryGet(queueName, out RabbitMQQueueEndpoint queueEndpoint))
-            {
-                queueEndpoint = new RabbitMQQueueEndpoint(queueName, this._connectionFactory);
-                this._endpointRegistry[queueName] = queueEndpoint;
-            }
-
-            return queueEndpoint;
+            var queueName = $"{hostContext.ServiceName}.Responses";
+            return this.ResolveCommandReplyToEndpoint(queueName);
         }
 
         public IEndpoint ResolveCommandReplyToEndpoint(string replyTo)
         {
             if (!this._endpointRegistry.TryGet(replyTo, out IEndpoint replyToEndpoint))
             {
-                throw new EndpointNotFoundException(replyTo);
+                replyToEndpoint = new RabbitMQQueueEndpoint(replyTo, this._connectionFactory);
+                this._endpointRegistry[replyTo] = replyToEndpoint;
             }
 
             return replyToEndpoint;

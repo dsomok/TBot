@@ -32,6 +32,8 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ.Endpoints
 
         public string Type { get; }
 
+        public bool IsSubscribed => false;
+
 
         public Task Publish(Message message)
         {
@@ -50,9 +52,14 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ.Endpoints
             return Task.CompletedTask;
         }
 
-        public Task Subscribe(Func<Message, Task<bool>> handler)
+        public Task<Guid> Subscribe(Func<Message, Task<bool>> handler)
         {
             throw new InvalidOperationException("Exchange cannot be subscribed to");
+        }
+
+        public Task Unsubscribe(Guid subscriptionId)
+        {
+            throw new InvalidOperationException("Exchange cannot be unsubscribed from");
         }
 
         public void Dispose()

@@ -16,6 +16,7 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Topology
 
         IEndpoint ResolveCommandSubscriptionEndpoint<TEvent>(string service) where TEvent : ICommand;
         IEndpoint ResolveCommandPublishingEndpoint<TCommand>(string service, Message message) where TCommand : ICommand;
+
         IEndpoint ResolveCommandReplyToEndpoint<TResponse>(HostContext hostContext) where TResponse : IMessage;
         IEndpoint ResolveCommandReplyToEndpoint(string replyTo);
     }

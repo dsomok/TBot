@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TBot.Api.Middleware.Logging;
 
 namespace TBot.Api
 {
@@ -28,6 +29,7 @@ namespace TBot.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            // app.UseRequestResponseLogging();
             app.UseMvc();
         }
     }

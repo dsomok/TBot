@@ -20,7 +20,11 @@ namespace TBot.Api
                        .WithConfiguration(configurationBuilder => {
                            configurationBuilder.AddJsonFile("appsettings.json");
                        })
-                       .WithLogger(loggerConfiguration => loggerConfiguration.WriteTo.Console())
+                       .WithLogger(loggerConfiguration => 
+                           loggerConfiguration
+                               .Enrich.FromLogContext()
+                               .WriteTo.Console()
+                        )
                        .WithMessaging(serviceName)
                        .WithRabbitMQMessaging(config => new RabbitMQMessagingSettings(
                            hostName: config["RabbitMQ:HostName"],

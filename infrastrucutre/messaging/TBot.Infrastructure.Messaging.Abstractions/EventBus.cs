@@ -34,7 +34,10 @@ namespace TBot.Infrastructure.Messaging.Abstractions
         public async Task<ISubscription> Subscribe<TEvent>(string service, Func<TEvent, Task> handler) where TEvent : class, IEvent
         {
             var endpoint = this._topology.ResolveEventSubscriptionEndpoint<TEvent>(service);
-            await endpoint.Subscribe(OnEvent);
+            if (!endpoint.IsSubscribed)
+            {
+                await endpoint.Subscribe(OnEvent);
+            }
 
             var subscription = this._subscriptionsRegistry.CreateSubscription<TEvent>(endpoint, async @event =>
             {

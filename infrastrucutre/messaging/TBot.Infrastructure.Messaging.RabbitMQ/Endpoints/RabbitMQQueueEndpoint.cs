@@ -5,6 +5,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using TBot.Infrastructure.Messaging.Abstractions;
 using TBot.Infrastructure.Messaging.Abstractions.Endpoints;
+using TBot.Infrastructure.Messaging.RabbitMQ.HandlersRegistry;
 
 namespace TBot.Infrastructure.Messaging.RabbitMQ.Endpoints
 {
@@ -14,6 +15,7 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ.Endpoints
         private readonly IModel _channel;
         private readonly EventingBasicConsumer _consumer;
 
+        private readonly IQueueMessagesHandlersRegistry _handlersRegistry;
 
         public RabbitMQQueueEndpoint(string name, ConnectionFactory connectionFactory)
         {
@@ -22,12 +24,28 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ.Endpoints
             this._connection = connectionFactory.CreateConnection();
             this._channel = this._connection.CreateModel();
             this._consumer = new EventingBasicConsumer(this._channel);
+            this._handlersRegistry = new QueueMessagesHandlersRegistry();
+
+            this._consumer.Received += async (model, args) =>
+            {
+                await this._handlersRegistry.ForEach(async handler =>
+                    await this.Handle(args, handler)
+                );
+            };
+
+            this._channel.BasicConsume(
+                queue: this.Name,
+                autoAck: false,
+                consumer: this._consumer
+            );
 
             this.Create();
         }
 
 
         public string Name { get; }
+
+        public bool IsSubscribed => this._handlersRegistry.Any();
 
 
         public void Bind(string exchangeName, string routingKey)
@@ -57,17 +75,14 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ.Endpoints
             return Task.CompletedTask;
         }
 
-        public Task Subscribe(Func<Message, Task<bool>> handler)
+        public Task<Guid> Subscribe(Func<Message, Task<bool>> handler)
         {
-            this._consumer.Received += async (model, args) => await this.Handle(args, handler);
+            return this._handlersRegistry.Add(handler);
+        }
 
-            this._channel.BasicConsume(
-                queue: this.Name,
-                autoAck: false,
-                consumer: this._consumer
-            );
-
-            return Task.CompletedTask;
+        public Task Unsubscribe(Guid subscriptionId)
+        {
+            return this._handlersRegistry.Remove(subscriptionId);
         }
 
         public void Dispose()

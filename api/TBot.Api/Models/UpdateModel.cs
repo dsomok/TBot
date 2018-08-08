@@ -54,5 +54,17 @@ namespace TBot.Api.Models
 
         [JsonProperty("text")]
         public string Text { get; set; }
+
+        [JsonProperty("chat")]
+        public ChatModel Chat { get; set; }
+    }
+
+    public class ChatModel
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("type")]
+        public string Type { get; set; }
     }
 }

@@ -5,11 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Events\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\messaging\TBot.Infrastructure.Messaging.Abstractions\TBot.Infrastructure.Messaging.Abstractions.csproj" />
+    <ProjectReference Include="..\TBot.Infrastructure.Bots\TBot.Infrastructure.Bots.csproj" />
   </ItemGroup>
 
 </Project>

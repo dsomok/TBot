@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -32,7 +33,13 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Hosting
 
         public MethodInfo GetHandleMethod(string handleMethodName)
         {
-            return this._handler.HandlerType.GetMethod(handleMethodName, BindingFlags.Public | BindingFlags.Instance);
+            return this._handler
+                       .HandlerType
+                       .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                       .Single(
+                           m => m.Name == handleMethodName &&
+                                m.GetParameters().Length == 1
+                       );
         }
 
         public LambdaExpression BuildHandleInvokationExpression(
@@ -47,9 +54,19 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Hosting
 
         public MethodInfo GetMessageBusRegistrationMethod(string registrationMethodName)
         {
-            return typeof(TBus)
-                   .GetMethod(registrationMethodName, BindingFlags.Public | BindingFlags.Instance)
-                   .MakeGenericMethod(this._handler.MessageType);
+            var genericArgumentsCount = this._handler.ResponseType == null ? 1 : 2;
+            var openRegisterHandlerMethod = typeof(TBus)
+                                         .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                                         .Single(m =>
+                                             m.Name == registrationMethodName &&
+                                             m.GetGenericArguments().Length == genericArgumentsCount
+                                         );
+
+            var closedRegisterHandlerMethod = this._handler.ResponseType == null
+                ? openRegisterHandlerMethod.MakeGenericMethod(this._handler.MessageType)
+                : openRegisterHandlerMethod.MakeGenericMethod(this._handler.MessageType, this._handler.ResponseType);
+
+            return closedRegisterHandlerMethod;
         }
 
         public Task<ISubscription> InvokeMessageBusRegistration(MethodInfo registrationMethod, string serviceName, LambdaExpression handleExpression)

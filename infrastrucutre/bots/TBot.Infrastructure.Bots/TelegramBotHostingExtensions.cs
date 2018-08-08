@@ -2,7 +2,8 @@
 using Autofac;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using TBot.Infrastructure.Bots.Api;
+using TBot.Infrastructure.Bots.API;
+using TBot.Infrastructure.Bots.Handlers.Context;
 using TBot.Infrastructure.Bots.HttpClient;
 using TBot.Infrastructure.Hosting.Abstractions;
 
@@ -15,8 +16,16 @@ namespace TBot.Infrastructure.Bots
             where TBuilder: IHostBuilder<TBuilder>
         {
             return hostBuilder
-                   .WithServices(builder =>
+                   .WithServices((builder, config) =>
                    {
+                       var botSettings = settings(config);
+
+                       builder.Register(context =>
+                       {
+                           var telegramApi = context.Resolve<ITelegramApi>();
+                           return new BotHandlerContextFactory(botSettings.Token, telegramApi);
+                       }).AsImplementedInterfaces().SingleInstance();
+
                        builder.RegisterType<TelegramApi>().AsImplementedInterfaces().SingleInstance();
                        builder.RegisterType<TelegramHttpClient>().AsImplementedInterfaces().SingleInstance();
                    })

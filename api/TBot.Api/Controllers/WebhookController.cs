@@ -4,7 +4,6 @@ using Serilog;
 using TBot.Api.Models;
 using TBot.Infrastructure.Bots.Contracts.Commands;
 using TBot.Infrastructure.Messaging.Abstractions;
-using TBot.TestBot.Contracts.Responses;
 
 namespace TBot.Api.Controllers
 {
@@ -29,12 +28,14 @@ namespace TBot.Api.Controllers
         [Route("{name}")]
         public async Task<IActionResult> GetUpdates(string name, [FromBody] UpdateModel update)
         {
-            this._logger.Information("Received update @{Update}", update);
+            var command = new StartCommand(
+                chatId: update.Message.Chat.Id,
+                messageId: update.Message.MessageId
+            );
 
-            var command = new StartCommand();
-            var response = await this._commandBus.Send<StartCommand, TestBotResponse>(name, command);
+            await this._commandBus.Send(name, command);
 
-            return Ok(response.Message);
+            return Ok();
         }
 
     }

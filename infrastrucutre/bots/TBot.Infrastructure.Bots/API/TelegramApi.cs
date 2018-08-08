@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Serilog;
 using TBot.Infrastructure.Bots.HttpClient;
 
-namespace TBot.Infrastructure.Bots.Api
+namespace TBot.Infrastructure.Bots.API
 {
     internal class TelegramApi : ITelegramApi
     {
@@ -79,6 +79,28 @@ namespace TBot.Infrastructure.Bots.Api
             catch (Exception ex)
             {
                 this._logger.Warning(ex, "Failed to delete webhook");
+                return false;
+            }
+        }
+
+        public async Task<bool> SendMessage(string token, int chatId, string message)
+        {
+            try
+            {
+                var uri = this.GetApiUri(token, "sendMessage");
+                var body = new
+                {
+                    chat_id = chatId,
+                    text = message
+                };
+
+                await this._client.Post(uri, body);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this._logger.Warning(ex, "Failed to send message");
                 return false;
             }
         }

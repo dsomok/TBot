@@ -1,4 +1,5 @@
-﻿using TBot.Infrastructure.Messaging.Abstractions.Endpoints;
+﻿using System;
+using TBot.Infrastructure.Messaging.Abstractions.Endpoints;
 using TBot.Infrastructure.Messaging.Abstractions.Messages;
 
 namespace TBot.Infrastructure.Messaging.Abstractions
@@ -7,5 +8,8 @@ namespace TBot.Infrastructure.Messaging.Abstractions
     {
         Message Build<TMessage>(string topic, TMessage message) where TMessage : class, IMessage;
         Message Build<TMessage>(string topic, TMessage message, IEndpoint replyToEndpoint) where TMessage : class, IMessage;
+
+        Message Build<TMessage>(string topic, Guid correlationId, TMessage message)
+            where TMessage : class, IMessage;
     }
 }

@@ -25,6 +25,15 @@ namespace TBot.Infrastructure.Messaging.Abstractions
             return new Message(topic, bodyType, body);
         }
 
+        public Message Build<TMessage>(string topic, Guid correlationId, TMessage message)
+            where TMessage : class, IMessage
+        {
+            var bodyType = typeof(TMessage).FullName;
+            var body = this._serializer.SerializeAsBytes(message);
+
+            return new Message(topic, bodyType, body, correlationId);
+        }
+
         public Message Build<TMessage>(string topic, TMessage message, IEndpoint replyToEndpoint) 
             where TMessage : class, IMessage
         {

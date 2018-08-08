@@ -9,7 +9,6 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ
 {
     public static class RabbitMQMessagingHostingExtensions
     {
-
         public static TBuilder WithRabbitMQMessaging<TBuilder>(this IHostBuilder<TBuilder> builder, Func<IConfiguration, RabbitMQMessagingSettings> settings)
             where TBuilder : IHostBuilder<TBuilder>
         {

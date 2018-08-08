@@ -9,6 +9,15 @@ namespace TBot.Infrastructure.Messaging.Abstractions
             : this(topic, bodyType, body, Guid.NewGuid(), string.Empty, new Dictionary<string, string>())
         {
         }
+        public Message(
+            string topic, 
+            string bodyType, 
+            byte[] body,
+            Guid correlationId
+        )
+            : this(topic, bodyType, body, correlationId, string.Empty, new Dictionary<string, string>())
+        {
+        }
 
         public Message(
             string topic, 
@@ -31,8 +40,6 @@ namespace TBot.Infrastructure.Messaging.Abstractions
         public Guid CorrelationId { get; }
 
         public string ReplyTo { get; }
-
-        public Guid? ReplyToMessage { get; }
 
         public string Topic { get; }
 

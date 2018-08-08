@@ -6,8 +6,11 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Endpoints
     public interface IEndpoint : IDisposable
     {
         string Name { get; }
+
+        bool IsSubscribed { get; }
         
         Task Publish(Message message);
-        Task Subscribe(Func<Message, Task<bool>> handler);
+        Task<Guid> Subscribe(Func<Message, Task<bool>> handler);
+        Task Unsubscribe(Guid subscriptionId);
     }
 }
