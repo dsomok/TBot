@@ -20,7 +20,11 @@ namespace TBot.TestBot.Handlers
 
         public override Task Handle(StartCommand command, IBotHandlerContext context)
         {
-            this._logger.Information("{CommandType} command has been received", command.GetType().Name);
+            this._logger.Information(
+                "{CommandType} command has been received from chat {ChatId}", 
+                command.GetType().Name,
+                context.ChatId
+            );
 
             var response = "Hi";
 
