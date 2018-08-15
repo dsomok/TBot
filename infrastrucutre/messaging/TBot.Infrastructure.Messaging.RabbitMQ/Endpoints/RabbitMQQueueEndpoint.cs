@@ -33,13 +33,13 @@ namespace TBot.Infrastructure.Messaging.RabbitMQ.Endpoints
                 );
             };
 
+            this.Create();
+
             this._channel.BasicConsume(
                 queue: this.Name,
                 autoAck: false,
                 consumer: this._consumer
             );
-
-            this.Create();
         }
 
 

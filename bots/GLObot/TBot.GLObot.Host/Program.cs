@@ -26,11 +26,11 @@ namespace TBot.GLObot.Host
                            userName: config["RabbitMQ:UserName"],
                            password: config["RabbitMQ:Password"])
                        )
-                       .WithTelegramBot(config => new TelegramBotSettings(
-                           name: config["botName"],
-                           token: config["botToken"],
-                           apiURL: config["apiURL"])
-                       )
+                       //.WithTelegramBot(config => new TelegramBotSettings(
+                       //    name: config["botName"],
+                       //    token: config["botToken"],
+                       //    apiURL: config["apiURL"])
+                       //)
                        .Build();
 
             await host.Run();

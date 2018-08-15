@@ -56,7 +56,7 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Hosting
         {
             var genericArgumentsCount = this._handler.ResponseType == null ? 1 : 2;
             var openRegisterHandlerMethod = typeof(TBus)
-                                         .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                                         .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
                                          .Single(m =>
                                              m.Name == registrationMethodName &&
                                              m.GetGenericArguments().Length == genericArgumentsCount

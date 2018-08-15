@@ -28,7 +28,7 @@ namespace TBot.TestBot.Host
                             userName: config["RabbitMQ:UserName"],
                             password: config["RabbitMQ:Password"])
                        )
-                       .WithTelegramBot(config => new TelegramBotSettings(
+                       .WithTelegramBot<IConsoleHostBuilder, TestBotCommandResolver>(config => new TelegramBotSettings(
                            name: config["botName"],
                            token: config["botToken"],
                            apiURL : config["apiURL"])

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using TBot.Api.Models;
+using TBot.Infrastructure.Bots.Contracts.API.Update;
 using TBot.Infrastructure.Bots.Contracts.Commands;
 using TBot.Infrastructure.Messaging.Abstractions;
 
@@ -28,10 +28,7 @@ namespace TBot.Api.Controllers
         [Route("{name}")]
         public async Task<IActionResult> GetUpdates(string name, [FromBody] UpdateModel update)
         {
-            var command = new StartCommand(
-                chatId: update.Message.Chat.Id,
-                messageId: update.Message.MessageId
-            );
+            var command = new NewUpdateCommand(update);
 
             await this._commandBus.Send(name, command);
 

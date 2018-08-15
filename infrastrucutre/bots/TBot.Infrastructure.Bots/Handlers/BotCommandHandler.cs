@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using TBot.Infrastructure.Bots.Contracts.Messages;
 using TBot.Infrastructure.Bots.Handlers.Context;
-using TBot.Infrastructure.Bots.Messages;
 
 namespace TBot.Infrastructure.Bots.Handlers
 {

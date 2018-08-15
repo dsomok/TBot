@@ -1,5 +1,5 @@
 ﻿using TBot.Infrastructure.Bots.API;
-using TBot.Infrastructure.Bots.Messages;
+using TBot.Infrastructure.Bots.Contracts.Messages;
 
 namespace TBot.Infrastructure.Bots.Handlers.Context
 {

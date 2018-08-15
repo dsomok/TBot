@@ -22,22 +22,19 @@ namespace TBot.Infrastructure.Messaging.Abstractions.Hosting
                        var commandHandlers = registrationsBuilder.GetHandlers(typeof(ICommandHandler<>));
                        foreach (var handler in commandHandlers)
                        {
-                           var iCommandHandlerType = typeof(ICommandHandler<>).MakeGenericType(handler.MessageType);
-                           services.RegisterType(handler.HandlerType).As(iCommandHandlerType).AsSelf();
+                           services.RegisterType(handler.HandlerType).AsImplementedInterfaces().AsSelf();
                        }
 
                        var commandHandlersWithResponse = registrationsBuilder.GetHandlers(typeof(ICommandHandler<,>));
                        foreach (var handler in commandHandlersWithResponse)
                        {
-                           var iCommandHandlerType = typeof(ICommandHandler<,>).MakeGenericType(handler.MessageType, handler.ResponseType);
-                           services.RegisterType(handler.HandlerType).As(iCommandHandlerType).AsSelf();
+                           services.RegisterType(handler.HandlerType).AsImplementedInterfaces().AsSelf();
                        }
 
                        var eventHandlers = registrationsBuilder.GetHandlers(typeof(IEventHandler<>));
                        foreach (var handler in eventHandlers)
                        {
-                           var iCommandHandlerType = typeof(IEventHandler<>).MakeGenericType(handler.MessageType);
-                           services.RegisterType(handler.HandlerType).As(iCommandHandlerType).AsSelf();
+                           services.RegisterType(handler.HandlerType).AsImplementedInterfaces().AsSelf();
                        }
                    })
                    .OnStart(async (container, config) =>
